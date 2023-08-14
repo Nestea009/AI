@@ -1,0 +1,2 @@
+# AI
+A JavaScript project
