@@ -120,48 +120,73 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 })({"main.js":[function(require,module,exports) {
 'use strict';
 
-function App() {
-  //document.addEventListener('DOMContentLoaded', function (){
-  //const input = document.getElementById("inputfield");
-  //input.addEventListener('change', consoleIt);
-  //})
+//document.addEventListener('DOMContentLoaded', function (){
+//const input = document.getElementById("inputfield");
+//input.addEventListener('change', consoleIt);
+//})
+var click_var = false;
+document.addEventListener('DOMContentLoaded', function () {
+  var button = document.getElementById('example');
+  button.addEventListener('click', clicked);
+});
+function clicked() {
+  money += 1;
+  click_var = true;
+  console.log(Math.random());
+  Algorithm(money);
+}
+var money = 0;
+function Algorithm(money) {
+  var reward = 0;
 
-  var click_var = false;
-  document.addEventListener('DOMContentLoaded', function () {
-    var button = document.getElementById('example');
-    button.addEventListener('click', clicked);
-  });
-  function clicked() {
-    money += 1;
-    console.log(money);
-    click_var = true;
-  }
-  var money = 0;
-  while (click_var) {
-    var reward = 0;
+  //Generate some random weights
+
+  var weights = [Math.random(), Math.random(), Math.random(), Math.random()];
+  var biasses = [Math.random(), Math.random(), Math.random(), Math.random()];
+  var weights2 = [Math.random(), Math.random(), Math.random(), Math.random()];
+  var biasses2 = [Math.random(), Math.random(), Math.random(), Math.random()];
+
+  //Start an AI protorype that gets set weights and mutates them a bit
+
+  function AI_prototype(weights, biasses, weights2, biasses2, money) {
+    //Start off with the money input and the CanYouBuyAHouse input
+
     var node1 = 0;
-    var node2 = 0;
-    var inputLayer = [node1, node2, money];
-    var weights = [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()];
-    var biasses = [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()];
+    var inputLayer = [node1, money];
 
-    //console.log(weights);
+    //Creativity will determine how much we change the weights and biasses
 
-    var hidden1 = node1 * weights[0] + biasses[0] + (node2 * weights[1] + biasses[1]) + (money * weights[2] + biasses[3]);
-    var hidden2 = node1 * weights[3] + biasses[3] + (node2 * weights[4] + biasses[4]) + (money * weights[5] + biasses[5]);
-    var hiddenLayer = [hidden1, hidden2];
-    console.log(hiddenLayer);
-    var weights2 = [Math.random(), Math.random(), Math.random(), Math.random()];
-    var biasses2 = [Math.random(), Math.random(), Math.random(), Math.random()];
+    var creativity = 0.1;
+
+    //We create new weights based on creativity and the default weights
+
+    weights = [weight[0] * (Math.random() * creativity), weight[1] * (Math.random() * creativity), weight[2] * (Math.random() * creativity), weight[3] * (Math.random() * creativity)];
+    biasses = [biasses[0] * (Math.random() * creativity), biasses[1] * (Math.random() * creativity), biasses[2] * (Math.random() * creativity), biasses[3] * (Math.random() * creativity)];
+
+    //We make the hidden nodes
+
+    var hidden1 = node1 * weights[0] + biasses[0] + (money * weights[1] + biasses[1]);
+    var hidden2 = node1 * weights[3] + biasses[3] + (money * weights[2] + biasses[2]);
+
+    //We create new weights based on creativity and the previous weights
+
+    weights2 = [weight2[0] * (Math.random() * creativity), weight2[1] * (Math.random() * creativity), weight2[2] * (Math.random() * creativity), weight2[3] * (Math.random() * creativity)];
+    biasses2 = [biasses2[0] * (Math.random() * creativity), biasses2[1] * (Math.random() * creativity), biasses2[2] * (Math.random() * creativity), biasses2[3] * (Math.random() * creativity)];
+
+    //We make the output nodes
+
     var output1 = hidden1 * weights2[0] + biasses2[0] + (hidden2 * weights2[1] + biasses2[1]);
     var output2 = hidden1 * weights2[2] + biasses2[2] + (hidden2 * weights2[3] + biasses2[3]);
-    if (money >= 100) {
-      break;
-    }
-    click_var = false;
+    var outputLayer = [output1, output2];
+    console.log(outputLayer);
+
+    //We return all of the values below, so that the new AI will take them as default
+
+    //REWARD SYSTEM MISSING
+
+    return [outputLayer, weights, biasses, weights2, biasses2];
   }
 }
-App();
 },{}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -187,7 +212,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59435" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63970" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
