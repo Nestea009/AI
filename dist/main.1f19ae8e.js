@@ -120,10 +120,12 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 })({"main.js":[function(require,module,exports) {
 'use strict';
 
-//document.addEventListener('DOMContentLoaded', function (){
-//const input = document.getElementById("inputfield");
-//input.addEventListener('change', consoleIt);
-//})
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+function _iterableToArrayLimit(arr, i) { var _i = null == arr ? null : "undefined" != typeof Symbol && arr[Symbol.iterator] || arr["@@iterator"]; if (null != _i) { var _s, _e, _x, _r, _arr = [], _n = !0, _d = !1; try { if (_x = (_i = _i.call(arr)).next, 0 === i) { if (Object(_i) !== _i) return; _n = !1; } else for (; !(_n = (_s = _x.call(_i)).done) && (_arr.push(_s.value), _arr.length !== i); _n = !0); } catch (err) { _d = !0, _e = err; } finally { try { if (!_n && null != _i.return && (_r = _i.return(), Object(_r) !== _r)) return; } finally { if (_d) throw _e; } } return _arr; } }
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 var click_var = false;
 document.addEventListener('DOMContentLoaded', function () {
   var button = document.getElementById('example');
@@ -132,7 +134,6 @@ document.addEventListener('DOMContentLoaded', function () {
 function clicked() {
   money += 1;
   click_var = true;
-  console.log(Math.random());
   Algorithm(money);
 }
 var money = 0;
@@ -148,7 +149,41 @@ function Algorithm(money) {
 
   //Start an AI protorype that gets set weights and mutates them a bit
 
-  function AI_prototype(weights, biasses, weights2, biasses2, money) {
+  //Run our prototype twice and compare the results
+  //The best one survives and the cycle repeats
+
+  for (var i = 0; i < 10; i++) {
+    var creativity = 1;
+    var creativity_weight = 2;
+    var _AI_prototype = AI_prototype(weights, biasses, weights2, biasses2, money, creativity, creativity_weight),
+      _AI_prototype2 = _slicedToArray(_AI_prototype, 5),
+      new_weights = _AI_prototype2[0],
+      new_biasses = _AI_prototype2[1],
+      new_weights2 = _AI_prototype2[2],
+      new_biasses2 = _AI_prototype2[3],
+      new_reward = _AI_prototype2[4];
+    var _AI_prototype3 = AI_prototype(weights, biasses, weights2, biasses2, money, creativity, creativity_weight),
+      _AI_prototype4 = _slicedToArray(_AI_prototype3, 5),
+      new_weightsN = _AI_prototype4[0],
+      new_biassesN = _AI_prototype4[1],
+      new_weights2N = _AI_prototype4[2],
+      new_biasses2N = _AI_prototype4[3],
+      new_rewardN = _AI_prototype4[4];
+    if (new_reward > new_rewardN) {
+      weights = new_weights;
+      biasses = new_biasses;
+      weights2 = new_weights2;
+      biasses2 = new_biasses2;
+    } else {
+      weights = new_weightsN;
+      biasses = new_biassesN;
+      weights2 = new_weights2N;
+      biasses2 = new_biasses2N;
+    }
+    creativity = creativity / 1.5;
+    creativity_weight = creativity_weight / 1.5;
+  }
+  function AI_prototype(weights, biasses, weights2, biasses2, money, creativity, creativity_weight) {
     //Start off with the money input and the CanYouBuyAHouse input
 
     var node1 = 0;
@@ -156,11 +191,9 @@ function Algorithm(money) {
 
     //Creativity will determine how much we change the weights and biasses
 
-    var creativity = 0.1;
-
     //We create new weights based on creativity and the default weights
 
-    weights = [weight[0] * (Math.random() * creativity), weight[1] * (Math.random() * creativity), weight[2] * (Math.random() * creativity), weight[3] * (Math.random() * creativity)];
+    weights = [weights[0] * (Math.random() * creativity_weight), weights[1] * (Math.random() * creativity_weight), weights[2] * (Math.random() * creativity_weight), weights[3] * (Math.random() * creativity_weight)];
     biasses = [biasses[0] * (Math.random() * creativity), biasses[1] * (Math.random() * creativity), biasses[2] * (Math.random() * creativity), biasses[3] * (Math.random() * creativity)];
 
     //We make the hidden nodes
@@ -170,7 +203,7 @@ function Algorithm(money) {
 
     //We create new weights based on creativity and the previous weights
 
-    weights2 = [weight2[0] * (Math.random() * creativity), weight2[1] * (Math.random() * creativity), weight2[2] * (Math.random() * creativity), weight2[3] * (Math.random() * creativity)];
+    weights2 = [weights2[0] * (Math.random() * creativity_weight), weights2[1] * (Math.random() * creativity_weight), weights2[2] * (Math.random() * creativity_weight), weights2[3] * (Math.random() * creativity_weight)];
     biasses2 = [biasses2[0] * (Math.random() * creativity), biasses2[1] * (Math.random() * creativity), biasses2[2] * (Math.random() * creativity), biasses2[3] * (Math.random() * creativity)];
 
     //We make the output nodes
@@ -180,11 +213,31 @@ function Algorithm(money) {
     var outputLayer = [output1, output2];
     console.log(outputLayer);
 
+    //Reward the AI if it clicks the button or if it would buy the house when it needs to
+
+    //if(output1 > 1){
+    //console.log("Wins Money!")
+    //reward += 1;
+    //}
+    //else{
+    //console.log("Looses Money!")
+    //reward -= 1;
+    //}
+
+    //if(output2 > 1){
+    //console.log("Would buy the house!")
+    //reward -= 1;
+    //}
+    //else{
+    //console.log("Wouldn't buy the house")
+    //reward += 1;
+    //}
+
+    reward = output1 + output2;
+
     //We return all of the values below, so that the new AI will take them as default
 
-    //REWARD SYSTEM MISSING
-
-    return [outputLayer, weights, biasses, weights2, biasses2];
+    return [weights, biasses, weights2, biasses2, reward];
   }
 }
 },{}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
@@ -212,7 +265,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63970" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60731" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

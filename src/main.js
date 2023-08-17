@@ -1,11 +1,5 @@
 'use strict';
 
-
-//document.addEventListener('DOMContentLoaded', function (){
-  //const input = document.getElementById("inputfield");
-  //input.addEventListener('change', consoleIt);
-//})
-
 let click_var = false;
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -16,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function () {
 function clicked() {
   money += 1;
   click_var = true;
-  console.log(Math.random())
   Algorithm(money);
 }
 
@@ -37,7 +30,35 @@ function Algorithm(money){
 
   //Start an AI protorype that gets set weights and mutates them a bit
 
-  function AI_prototype(weights, biasses, weights2, biasses2, money){
+
+  //Run our prototype twice and compare the results
+  //The best one survives and the cycle repeats
+
+  for(let i = 0; i < 10; i++){
+
+    let creativity = 1;
+    let creativity_weight = 2;
+
+    let [new_weights, new_biasses, new_weights2, new_biasses2, new_reward] = AI_prototype(weights, biasses, weights2, biasses2, money, creativity, creativity_weight);
+    let [new_weightsN, new_biassesN, new_weights2N, new_biasses2N, new_rewardN] = AI_prototype(weights, biasses, weights2, biasses2, money, creativity, creativity_weight);
+    if(new_reward > new_rewardN){
+      weights = new_weights;
+      biasses = new_biasses;
+      weights2 = new_weights2;
+      biasses2 = new_biasses2;
+    }
+    else{
+      weights = new_weightsN;
+      biasses = new_biassesN;
+      weights2 = new_weights2N;
+      biasses2 = new_biasses2N;
+    }
+
+    creativity = creativity / 1.5;
+    creativity_weight = creativity_weight / 1.5;
+  }
+
+  function AI_prototype(weights, biasses, weights2, biasses2, money, creativity, creativity_weight){
 
     //Start off with the money input and the CanYouBuyAHouse input
 
@@ -47,11 +68,11 @@ function Algorithm(money){
 
     //Creativity will determine how much we change the weights and biasses
 
-    let creativity = 0.1;
+
 
     //We create new weights based on creativity and the default weights
 
-    weights = [(weight[0] * (Math.random() * creativity)), (weight[1] * (Math.random() * creativity)), (weight[2] * (Math.random() * creativity)), (weight[3] * (Math.random() * creativity))]
+    weights = [(weights[0] * (Math.random() * creativity_weight)), (weights[1] * (Math.random() * creativity_weight)), (weights[2] * (Math.random() * creativity_weight)), (weights[3] * (Math.random() * creativity_weight))]
     biasses = [(biasses[0] * (Math.random() * creativity)), (biasses[1] * (Math.random() * creativity)), (biasses[2] * (Math.random() * creativity)), (biasses[3] * (Math.random() * creativity))]
 
     //We make the hidden nodes
@@ -61,7 +82,7 @@ function Algorithm(money){
 
     //We create new weights based on creativity and the previous weights
     
-    weights2 = [(weight2[0] * (Math.random() * creativity)), (weight2[1] * (Math.random() * creativity)), (weight2[2] * (Math.random() * creativity)), (weight2[3] * (Math.random() * creativity))]
+    weights2 = [(weights2[0] * (Math.random() * creativity_weight)), (weights2[1] * (Math.random() * creativity_weight)), (weights2[2] * (Math.random() * creativity_weight)), (weights2[3] * (Math.random() * creativity_weight))]
     biasses2 = [(biasses2[0] * (Math.random() * creativity)), (biasses2[1] * (Math.random() * creativity)), (biasses2[2] * (Math.random() * creativity)), (biasses2[3] * (Math.random() * creativity))]
     
     //We make the output nodes
@@ -73,11 +94,31 @@ function Algorithm(money){
   
     console.log(outputLayer);
 
+    //Reward the AI if it clicks the button or if it would buy the house when it needs to
+
+    //if(output1 > 1){
+      //console.log("Wins Money!")
+      //reward += 1;
+    //}
+    //else{
+      //console.log("Looses Money!")
+      //reward -= 1;
+    //}
+
+    //if(output2 > 1){
+      //console.log("Would buy the house!")
+      //reward -= 1;
+    //}
+    //else{
+      //console.log("Wouldn't buy the house")
+      //reward += 1;
+    //}
+
+    reward = output1 + output2;
+
     //We return all of the values below, so that the new AI will take them as default
 
-    //REWARD SYSTEM MISSING
-
-    return [outputLayer, weights, biasses, weights2, biasses2]
+    return [weights, biasses, weights2, biasses2, reward]
   }
   
 
