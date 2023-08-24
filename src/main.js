@@ -38,23 +38,39 @@ function Algorithm(money){
   //Run our prototype twice and compare the results
   //The best one survives and the cycle repeats
 
-  for(let i = 0; i < 1000; i++){
+  for(let i = 0; i < 100000; i++){
 
     let [new_weights, new_biasses, new_weights2, new_biasses2, new_reward] = AI_prototype(weights, biasses, weights2, biasses2, money, creativity, creativity_weight);
     let [new_weightsN, new_biassesN, new_weights2N, new_biasses2N, new_rewardN] = AI_prototype(weights, biasses, weights2, biasses2, money, creativity, creativity_weight);
-    if(new_reward > new_rewardN){
+    let [new_weightsM, new_biassesM, new_weights2M, new_biasses2M, new_rewardM] = AI_prototype(weights, biasses, weights2, biasses2, money, creativity, creativity_weight);
+    
+    if((new_reward > new_rewardN) && (new_reward > new_rewardM)){
       weights = new_weights;
       biasses = new_biasses;
       weights2 = new_weights2;
       biasses2 = new_biasses2;
       console.log("First one is better")
     }
-    else{
+    else if((new_rewardN > new_reward) && (new_rewardN > new_rewardM)){
       weights = new_weightsN;
       biasses = new_biassesN;
       weights2 = new_weights2N;
       biasses2 = new_biasses2N;
       console.log("Second one is better")
+    }
+    else if((new_rewardM > new_reward) && (new_rewardM > new_rewardN)){
+      weights = new_weightsM;
+      biasses = new_biassesM;
+      weights2 = new_weights2M;
+      biasses2 = new_biasses2M;
+      console.log("Third one is better")
+    }
+    else {
+      console.log("Rewards are the same, should choose randomly")
+    }
+    if(creativity > 1.1){
+      creativity -= 0.0002;
+      console.log(creativity);
     }
   }
 
@@ -97,7 +113,20 @@ function Algorithm(money){
 
     //Reward the AI if it clicks the button or if it would buy the house when it needs to
 
-    reward += (output1 + output2);
+    //If clicks the button:
+    if(output1 > 3){
+      if(output1 < 5){
+        reward += (1 / (output1 - 3));
+      }
+    }
+    else {
+      reward += (1 / (3 - output1))
+    }
+
+    //If buys the house
+    if(output2 > 10){
+      reward -= output2;
+    }
 
     //We return all of the values below, so that the new AI will take them as default
 

@@ -157,7 +157,7 @@ function Algorithm(money) {
   //Run our prototype twice and compare the results
   //The best one survives and the cycle repeats
 
-  for (var i = 0; i < 1000; i++) {
+  for (var i = 0; i < 100000; i++) {
     var _AI_prototype = AI_prototype(weights, biasses, weights2, biasses2, money, creativity, creativity_weight),
       _AI_prototype2 = _slicedToArray(_AI_prototype, 5),
       new_weights = _AI_prototype2[0],
@@ -172,18 +172,37 @@ function Algorithm(money) {
       new_weights2N = _AI_prototype4[2],
       new_biasses2N = _AI_prototype4[3],
       new_rewardN = _AI_prototype4[4];
-    if (new_reward > new_rewardN) {
+    var _AI_prototype5 = AI_prototype(weights, biasses, weights2, biasses2, money, creativity, creativity_weight),
+      _AI_prototype6 = _slicedToArray(_AI_prototype5, 5),
+      new_weightsM = _AI_prototype6[0],
+      new_biassesM = _AI_prototype6[1],
+      new_weights2M = _AI_prototype6[2],
+      new_biasses2M = _AI_prototype6[3],
+      new_rewardM = _AI_prototype6[4];
+    if (new_reward > new_rewardN && new_reward > new_rewardM) {
       weights = new_weights;
       biasses = new_biasses;
       weights2 = new_weights2;
       biasses2 = new_biasses2;
       console.log("First one is better");
-    } else {
+    } else if (new_rewardN > new_reward && new_rewardN > new_rewardM) {
       weights = new_weightsN;
       biasses = new_biassesN;
       weights2 = new_weights2N;
       biasses2 = new_biasses2N;
       console.log("Second one is better");
+    } else if (new_rewardM > new_reward && new_rewardM > new_rewardN) {
+      weights = new_weightsM;
+      biasses = new_biassesM;
+      weights2 = new_weights2M;
+      biasses2 = new_biasses2M;
+      console.log("Third one is better");
+    } else {
+      console.log("Rewards are the same, should choose randomly");
+    }
+    if (creativity > 1.1) {
+      creativity -= 0.0002;
+      console.log(creativity);
     }
   }
   function AI_prototype(weights, biasses, weights2, biasses2, money, creativity, creativity_weight) {
@@ -220,7 +239,19 @@ function Algorithm(money) {
 
     //Reward the AI if it clicks the button or if it would buy the house when it needs to
 
-    reward += output1 + output2;
+    //If clicks the button:
+    if (output1 > 3) {
+      if (output1 < 5) {
+        reward += 1 / (output1 - 3);
+      }
+    } else {
+      reward += 1 / (3 - output1);
+    }
+
+    //If buys the house
+    if (output2 > 10) {
+      reward -= output2;
+    }
 
     //We return all of the values below, so that the new AI will take them as default
 
@@ -252,7 +283,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56013" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54162" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
