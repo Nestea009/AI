@@ -7,6 +7,24 @@ document.addEventListener('DOMContentLoaded', function () {
   button.addEventListener('click', clicked);
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+  const button = document.getElementById('AI_button');
+  button.addEventListener('click', ConsoleIt);
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+  const button = document.getElementById('BuyHouse');
+  button.addEventListener('click', ConsoleIt2);
+});
+
+function ConsoleIt(){
+  console.log("Clicked!");
+}
+
+function ConsoleIt2(){
+  console.log("Bought the House");
+}
+
 function clicked() {
   money += 1;
   click_var = true;
@@ -18,7 +36,29 @@ let money = 0;
 
 function Algorithm(money){
 
-  let reward = 0;
+  function ButtonClick(Reward){
+    const button = document.getElementById('AI_button');
+    var clickEvent = new MouseEvent("click", {
+      "view": window,
+      "bubbles": true,
+      "cancelable": false
+    });
+    button.dispatchEvent(clickEvent);
+    Reward += 100;
+    return Reward;
+  }
+
+  function ButtonClick2(Reward){
+    const button = document.getElementById('BuyHouse');
+    var clickEvent = new MouseEvent("click", {
+      "view": window,
+      "bubbles": true,
+      "cancelable": false
+    });
+    button.dispatchEvent(clickEvent);
+    Reward -= 10;
+    return Reward;
+  }
 
   //Generate some random weights
   
@@ -38,7 +78,7 @@ function Algorithm(money){
   //Run our prototype twice and compare the results
   //The best one survives and the cycle repeats
 
-  for(let i = 0; i < 100000; i++){
+  for(let i = 0; i < 10; i++){
 
     let [new_weights, new_biasses, new_weights2, new_biasses2, new_reward] = AI_prototype(weights, biasses, weights2, biasses2, money, creativity, creativity_weight);
     let [new_weightsN, new_biassesN, new_weights2N, new_biasses2N, new_rewardN] = AI_prototype(weights, biasses, weights2, biasses2, money, creativity, creativity_weight);
@@ -70,7 +110,6 @@ function Algorithm(money){
     }
     if(creativity > 1.1){
       creativity -= 0.0002;
-      console.log(creativity);
     }
   }
 
@@ -116,16 +155,16 @@ function Algorithm(money){
     //If clicks the button:
     if(output1 > 3){
       if(output1 < 5){
-        reward += (1 / (output1 - 3));
+        reward = ButtonClick(reward);
       }
     }
     else {
-      reward += (1 / (3 - output1))
+      //reward += (1 / (3 - output1))
     }
 
     //If buys the house
     if(output2 > 10){
-      reward -= output2;
+      reward = ButtonClick2(reward);
     }
 
     //We return all of the values below, so that the new AI will take them as default

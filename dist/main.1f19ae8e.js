@@ -131,6 +131,20 @@ document.addEventListener('DOMContentLoaded', function () {
   var button = document.getElementById('example');
   button.addEventListener('click', clicked);
 });
+document.addEventListener('DOMContentLoaded', function () {
+  var button = document.getElementById('AI_button');
+  button.addEventListener('click', ConsoleIt);
+});
+document.addEventListener('DOMContentLoaded', function () {
+  var button = document.getElementById('BuyHouse');
+  button.addEventListener('click', ConsoleIt2);
+});
+function ConsoleIt() {
+  console.log("Clicked!");
+}
+function ConsoleIt2() {
+  console.log("Bought the House");
+}
 function clicked() {
   money += 1;
   click_var = true;
@@ -138,7 +152,28 @@ function clicked() {
 }
 var money = 0;
 function Algorithm(money) {
-  var reward = 0;
+  function ButtonClick(Reward) {
+    var button = document.getElementById('AI_button');
+    var clickEvent = new MouseEvent("click", {
+      "view": window,
+      "bubbles": true,
+      "cancelable": false
+    });
+    button.dispatchEvent(clickEvent);
+    Reward += 100;
+    return Reward;
+  }
+  function ButtonClick2(Reward) {
+    var button = document.getElementById('BuyHouse');
+    var clickEvent = new MouseEvent("click", {
+      "view": window,
+      "bubbles": true,
+      "cancelable": false
+    });
+    button.dispatchEvent(clickEvent);
+    Reward -= 10;
+    return Reward;
+  }
 
   //Generate some random weights
 
@@ -157,7 +192,7 @@ function Algorithm(money) {
   //Run our prototype twice and compare the results
   //The best one survives and the cycle repeats
 
-  for (var i = 0; i < 100000; i++) {
+  for (var i = 0; i < 10; i++) {
     var _AI_prototype = AI_prototype(weights, biasses, weights2, biasses2, money, creativity, creativity_weight),
       _AI_prototype2 = _slicedToArray(_AI_prototype, 5),
       new_weights = _AI_prototype2[0],
@@ -202,7 +237,6 @@ function Algorithm(money) {
     }
     if (creativity > 1.1) {
       creativity -= 0.0002;
-      console.log(creativity);
     }
   }
   function AI_prototype(weights, biasses, weights2, biasses2, money, creativity, creativity_weight) {
@@ -242,15 +276,15 @@ function Algorithm(money) {
     //If clicks the button:
     if (output1 > 3) {
       if (output1 < 5) {
-        reward += 1 / (output1 - 3);
+        reward = ButtonClick(reward);
       }
     } else {
-      reward += 1 / (3 - output1);
+      //reward += (1 / (3 - output1))
     }
 
     //If buys the house
     if (output2 > 10) {
-      reward -= output2;
+      reward = ButtonClick2(reward);
     }
 
     //We return all of the values below, so that the new AI will take them as default
@@ -283,7 +317,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54162" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59624" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
