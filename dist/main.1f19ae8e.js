@@ -152,7 +152,11 @@ function clicked() {
 }
 var money = 0;
 function Algorithm(money) {
-  function ButtonClick(Reward) {
+  //If the output1 value of the AI is avobe 2 and below 4
+  //make the AI click the button for a reward
+
+  function ButtonClick(value) {
+    var Reward = 0;
     var button = document.getElementById('AI_button');
     var clickEvent = new MouseEvent("click", {
       "view": window,
@@ -160,10 +164,15 @@ function Algorithm(money) {
       "cancelable": false
     });
     button.dispatchEvent(clickEvent);
-    Reward += 100;
+    if (value < 3) {
+      Reward += 1 / (3 - value);
+    } else {
+      Reward += 1 / (value - 3);
+    }
     return Reward;
   }
-  function ButtonClick2(Reward) {
+  function ButtonClick2(value) {
+    var Reward = 0;
     var button = document.getElementById('BuyHouse');
     var clickEvent = new MouseEvent("click", {
       "view": window,
@@ -171,7 +180,9 @@ function Algorithm(money) {
       "cancelable": false
     });
     button.dispatchEvent(clickEvent);
-    Reward -= 10;
+    //Reward -= 10;   THIS FUCKS UP THE FIRST REWARD
+    //BECAUSE GOOD OUTPUT1 VALUES ARE OVERSHADOWED BY BAD 
+    //OUTPUT2 VALUES
     return Reward;
   }
 
@@ -192,22 +203,22 @@ function Algorithm(money) {
   //Run our prototype twice and compare the results
   //The best one survives and the cycle repeats
 
-  for (var i = 0; i < 10; i++) {
-    var _AI_prototype = AI_prototype(weights, biasses, weights2, biasses2, money, creativity, creativity_weight),
+  for (var i = 0; i < 10000; i++) {
+    var _AI_prototype = AI_prototype(weights, biasses, weights2, biasses2, creativity, creativity_weight),
       _AI_prototype2 = _slicedToArray(_AI_prototype, 5),
       new_weights = _AI_prototype2[0],
       new_biasses = _AI_prototype2[1],
       new_weights2 = _AI_prototype2[2],
       new_biasses2 = _AI_prototype2[3],
       new_reward = _AI_prototype2[4];
-    var _AI_prototype3 = AI_prototype(weights, biasses, weights2, biasses2, money, creativity, creativity_weight),
+    var _AI_prototype3 = AI_prototype(weights, biasses, weights2, biasses2, creativity, creativity_weight),
       _AI_prototype4 = _slicedToArray(_AI_prototype3, 5),
       new_weightsN = _AI_prototype4[0],
       new_biassesN = _AI_prototype4[1],
       new_weights2N = _AI_prototype4[2],
       new_biasses2N = _AI_prototype4[3],
       new_rewardN = _AI_prototype4[4];
-    var _AI_prototype5 = AI_prototype(weights, biasses, weights2, biasses2, money, creativity, creativity_weight),
+    var _AI_prototype5 = AI_prototype(weights, biasses, weights2, biasses2, creativity, creativity_weight),
       _AI_prototype6 = _slicedToArray(_AI_prototype5, 5),
       new_weightsM = _AI_prototype6[0],
       new_biassesM = _AI_prototype6[1],
@@ -236,15 +247,14 @@ function Algorithm(money) {
       console.log("Rewards are the same, should choose randomly");
     }
     if (creativity > 1.1) {
-      creativity -= 0.0002;
+      creativity -= 0.002;
     }
   }
-  function AI_prototype(weights, biasses, weights2, biasses2, money, creativity, creativity_weight) {
+  function AI_prototype(weights, biasses, weights2, biasses2, creativity, creativity_weight) {
     //Start off with the money input and the CanYouBuyAHouse input
 
     var node1 = 1;
     var node2 = 1;
-    var inputLayer = [node1, node2];
     var reward = 0;
 
     //Creativity will determine how much we change the weights and biasses
@@ -275,8 +285,8 @@ function Algorithm(money) {
 
     //If clicks the button:
     if (output1 > 3) {
-      if (output1 < 5) {
-        reward = ButtonClick(reward);
+      if (output1 < 4 && output1 > 2) {
+        reward += ButtonClick(output1);
       }
     } else {
       //reward += (1 / (3 - output1))
@@ -284,7 +294,7 @@ function Algorithm(money) {
 
     //If buys the house
     if (output2 > 10) {
-      reward = ButtonClick2(reward);
+      reward += ButtonClick2(output2);
     }
 
     //We return all of the values below, so that the new AI will take them as default
@@ -317,7 +327,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59624" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50853" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

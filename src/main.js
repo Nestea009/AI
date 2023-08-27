@@ -36,7 +36,11 @@ let money = 0;
 
 function Algorithm(money){
 
-  function ButtonClick(Reward){
+  //If the output1 value of the AI is avobe 2 and below 4
+  //make the AI click the button for a reward
+
+  function ButtonClick(value){
+    let Reward = 0;
     const button = document.getElementById('AI_button');
     var clickEvent = new MouseEvent("click", {
       "view": window,
@@ -44,11 +48,17 @@ function Algorithm(money){
       "cancelable": false
     });
     button.dispatchEvent(clickEvent);
-    Reward += 100;
+    if(value < 3){
+      Reward += (1 / (3 - value));
+    }
+    else{
+      Reward += (1 / (value - 3));
+    }
     return Reward;
   }
 
-  function ButtonClick2(Reward){
+  function ButtonClick2(value){
+    let Reward = 0;
     const button = document.getElementById('BuyHouse');
     var clickEvent = new MouseEvent("click", {
       "view": window,
@@ -56,7 +66,9 @@ function Algorithm(money){
       "cancelable": false
     });
     button.dispatchEvent(clickEvent);
-    Reward -= 10;
+    //Reward -= 10;   THIS FUCKS UP THE FIRST REWARD
+    //BECAUSE GOOD OUTPUT1 VALUES ARE OVERSHADOWED BY BAD 
+    //OUTPUT2 VALUES
     return Reward;
   }
 
@@ -78,11 +90,11 @@ function Algorithm(money){
   //Run our prototype twice and compare the results
   //The best one survives and the cycle repeats
 
-  for(let i = 0; i < 10; i++){
+  for(let i = 0; i < 10000; i++){
 
-    let [new_weights, new_biasses, new_weights2, new_biasses2, new_reward] = AI_prototype(weights, biasses, weights2, biasses2, money, creativity, creativity_weight);
-    let [new_weightsN, new_biassesN, new_weights2N, new_biasses2N, new_rewardN] = AI_prototype(weights, biasses, weights2, biasses2, money, creativity, creativity_weight);
-    let [new_weightsM, new_biassesM, new_weights2M, new_biasses2M, new_rewardM] = AI_prototype(weights, biasses, weights2, biasses2, money, creativity, creativity_weight);
+    let [new_weights, new_biasses, new_weights2, new_biasses2, new_reward] = AI_prototype(weights, biasses, weights2, biasses2, creativity, creativity_weight);
+    let [new_weightsN, new_biassesN, new_weights2N, new_biasses2N, new_rewardN] = AI_prototype(weights, biasses, weights2, biasses2, creativity, creativity_weight);
+    let [new_weightsM, new_biassesM, new_weights2M, new_biasses2M, new_rewardM] = AI_prototype(weights, biasses, weights2, biasses2, creativity, creativity_weight);
     
     if((new_reward > new_rewardN) && (new_reward > new_rewardM)){
       weights = new_weights;
@@ -109,18 +121,16 @@ function Algorithm(money){
       console.log("Rewards are the same, should choose randomly")
     }
     if(creativity > 1.1){
-      creativity -= 0.0002;
+      creativity -= 0.002;
     }
   }
 
-  function AI_prototype(weights, biasses, weights2, biasses2, money, creativity, creativity_weight){
+  function AI_prototype(weights, biasses, weights2, biasses2, creativity, creativity_weight){
 
     //Start off with the money input and the CanYouBuyAHouse input
 
     let node1 = 1;
     let node2 = 1;
-
-    let inputLayer = [node1, node2];
 
     let reward = 0;
 
@@ -154,8 +164,8 @@ function Algorithm(money){
 
     //If clicks the button:
     if(output1 > 3){
-      if(output1 < 5){
-        reward = ButtonClick(reward);
+      if((output1 < 4) && (output1 > 2)){
+        reward += ButtonClick(output1);
       }
     }
     else {
@@ -164,7 +174,7 @@ function Algorithm(money){
 
     //If buys the house
     if(output2 > 10){
-      reward = ButtonClick2(reward);
+      reward += ButtonClick2(output2);
     }
 
     //We return all of the values below, so that the new AI will take them as default
